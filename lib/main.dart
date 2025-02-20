@@ -21,11 +21,16 @@ class _BasicUIState extends State<BasicUI> {
   //create a list to store a notes
   List<Map<String, dynamic>> mNotes = [];
 
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     mdb = Db_helper.getInstance();
     getNotes();
+    titleController.clear();
+    descController.clear();
   }
 
   getNotes() async {
@@ -68,6 +73,7 @@ class _BasicUIState extends State<BasicUI> {
                         ),
                         SizedBox(height: 20),
                         TextField(
+                          controller: titleController,
                           style: TextStyle(fontSize: 12),
                           decoration: InputDecoration(
                               //enabledBorder Means when we don't click on the input field
@@ -80,7 +86,38 @@ class _BasicUIState extends State<BasicUI> {
                                 borderSide:
                                     BorderSide(color: Colors.lightGreen),
                               )),
-                        )
+                        ),
+                        SizedBox(height: 30),
+                        TextField(
+                          controller: descController,
+                          style: TextStyle(fontSize: 12),
+                          decoration: InputDecoration(
+                              //enabledBorder Means when we don't click on the input field
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.pinkAccent),
+                              ),
+                              //focusedBorder Means when we click on the input field
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.lightGreen),
+                              )),
+                        ),
+                        SizedBox(height: 30),
+                        OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: Colors.white30,
+                            ),
+                            onPressed: () async {
+                              //since addNote is a boolen function if the any rows are effected then it will return true
+                              bool check = await mdb!.addNote(
+                                  title: titleController.text,
+                                  desc: descController.text);
+                              if (check) {
+                                getNotes();
+                              }
+                            },
+                            child: Text("Add Notes"))
                       ],
                     ),
                   );
