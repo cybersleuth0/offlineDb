@@ -92,4 +92,18 @@ class Db_helper {
     }
     return mnotes;
   }
+
+  Future<bool> updatenote(NoteModel updatenote) async {
+    var database = await getdb();
+    var roweffected = await database.update(TABLE_NAME, updatenote.tomap(),
+        where: "$COLUMN_ID = ${updatenote.nId}");
+    return roweffected > 0;
+  }
+
+  Future<bool> deletenote(int id) async {
+    var database = await getdb();
+    var roweffected =
+        await database.delete(TABLE_NAME, where: "$COLUMN_ID=$id");
+    return roweffected > 0;
+  }
 }

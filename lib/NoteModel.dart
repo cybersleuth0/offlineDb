@@ -51,7 +51,7 @@ It converts the object into a Map:
       Db_helper.COLUMN_TITLE: nTitle,
       Db_helper.COLUMN_DESC: nDesc,
       Db_helper.COLUMN_CREATED_AT: nCreatedat,
-      //Db_helper.COLUMN_ID: nId,
+      Db_helper.COLUMN_ID: nId,
     };
   }
 

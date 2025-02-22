@@ -99,7 +99,9 @@ class _HomepageState extends State<Homepage> {
                             arguments: {
                               "title": allnotes[index].nTitle,
                               "desc": allnotes[index].nDesc,
+                              "id": allnotes[index].nId
                             });
+                        setState(() {});
                       },
                       child: Container(
                         margin: EdgeInsets.only(right: 5, left: 5),
