@@ -23,12 +23,13 @@ class _DetailspageState extends State<Detailspage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    if (args != null) {
-      id = args["id"];
-      titleController.text = args["title"];
-      descController.text = args["desc"];
-    }
+    ModalRoute
+        .of(context)!
+        .settings
+        .arguments as Map<String, dynamic>;
+    id = args["id"];
+    titleController.text = args["title"];
+    descController.text = args["desc"];
     if (args["date"] != null) {
       int timestamp = int.tryParse(args["date"].toString()) ?? 0;
       if (timestamp > 0) {
@@ -47,7 +48,10 @@ class _DetailspageState extends State<Detailspage> {
         nId: id!, // Int id
         nTitle: titleController.text,
         nDesc: descController.text,
-        nCreatedat: DateTime.now().millisecondsSinceEpoch.toString());
+        nCreatedat: DateTime
+            .now()
+            .millisecondsSinceEpoch
+            .toString());
 
     Provider.of<DataFeederProvider>(context, listen: false)
         .updateNote(updatedNote);
@@ -136,7 +140,7 @@ class _DetailspageState extends State<Detailspage> {
                             Text(
                               "Are You Sure!",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 28),
+                              TextStyle(color: Colors.white, fontSize: 28),
                             ),
                             SizedBox(height: 10),
                             Row(
