@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:offlinedb/NoteModel.dart';
-import 'package:offlinedb/db_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:offlinedb/Provider.dart';
