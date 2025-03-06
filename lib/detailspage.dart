@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:offlinedb/NoteModel.dart';
 import 'package:offlinedb/db_helper.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:offlinedb/Provider.dart';
 
 class Detailspage extends StatefulWidget {
   @override
@@ -10,25 +13,56 @@ class Detailspage extends StatefulWidget {
 
 class _DetailspageState extends State<Detailspage> {
   //call the dbhelper
-  Db_helper mdb = Db_helper.getInstance();
+  // Db_helper mdb = Db_helper.getInstance();
   TextEditingController titleController = TextEditingController();
   TextEditingController descController = TextEditingController();
+  int? id;
+  String formatedDate = "";
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    if (args != null) {
+      id = args["id"];
+      titleController.text = args["title"];
+      descController.text = args["desc"];
+    }
+    if (args["date"] != null) {
+      int timestamp = int.tryParse(args["date"].toString()) ?? 0;
+      if (timestamp > 0) {
+        formatedDate = DateFormat.yMMMEd()
+            .format(DateTime.fromMillisecondsSinceEpoch(timestamp));
+      }
+    }
+  }
+
+  void updateNote() {
+    if (id == null ||
+        titleController.text.isEmpty ||
+        descController.text.isEmpty) return;
+
+    final updatedNote = NoteModel(
+        nId: id!, // Int id
+        nTitle: titleController.text,
+        nDesc: descController.text,
+        nCreatedat: DateTime.now().millisecondsSinceEpoch.toString());
+
+    Provider.of<DataFeederProvider>(context, listen: false)
+        .updateNote(updatedNote);
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-
-    var oldtitle = titleController.text = args["title"];
-    var olddesc = descController.text = args["desc"];
-    titleController.text = args["title"];
-    descController.text = args["desc"];
-
+    // Map<String, dynamic> args =
+    //     ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    // print("data we getting ${args.values}");
+    // var oldtitle = args["title"];
+    // var olddesc = args["desc"];
+    // titleController.text = args["title"];
+    // descController.text = args["desc"];
     return Scaffold(
       backgroundColor: Color(0xff252525),
       appBar: AppBar(
@@ -39,16 +73,28 @@ class _DetailspageState extends State<Detailspage> {
             //backbutton
             InkWell(
               onTap: () {
-                if (titleController.text != oldtitle ||
-                    descController.text != olddesc) {
-                  mdb.updatenote(NoteModel(
+                updateNote();
+
+                // if (titleController.text != oldtitle ||
+                //     descController.text != olddesc) {
+                //   // context.read<DataFeederProvider>().updateNote(NoteModel(
+                //   //     nId: args["id"],
+                //   //     nTitle: titleController.text,
+                //   //     nDesc: descController.text,
+                //   //     nCreatedat:
+                //   //         DateTime.now().millisecondsSinceEpoch.toString()
+                //   // )
+                //   );
+                /*mdb.updatenote(NoteModel(
                       nId: args["id"],
                       nTitle: titleController.text,
                       nDesc: descController.text,
                       nCreatedat:
-                          DateTime.now().millisecondsSinceEpoch.toString()));
-                }
-                Navigator.pop(context);
+                      DateTime
+                          .now()
+                          .millisecondsSinceEpoch
+                          .toString()));*/
+                // },
               },
               child: Container(
                 margin: EdgeInsets.only(left: 5),
@@ -65,13 +111,17 @@ class _DetailspageState extends State<Detailspage> {
                 ),
               ),
             ),
+            Text(
+              formatedDate.isNotEmpty ? formatedDate : "No Date Available",
+              style: TextStyle(color: Colors.white),
+            ),
             //delete button
             InkWell(
               onTap: () {
                 showModalBottomSheet(
                     backgroundColor: Color(0xff252525),
                     context: context,
-                    builder: (_) {
+                    builder: (context) {
                       return Container(
                         height: 200,
                         margin: EdgeInsets.only(left: 5, right: 5),
@@ -94,7 +144,10 @@ class _DetailspageState extends State<Detailspage> {
                                 Expanded(
                                     child: TextButton(
                                         onPressed: () {
-                                          mdb.deletenote(args["id"]);
+                                          context
+                                              .read<DataFeederProvider>()
+                                              .removeNote(id!);
+                                          // mdb.deletenote(args["id"]);
                                           Navigator.pop(context);
                                           Navigator.pop(context);
                                         },
